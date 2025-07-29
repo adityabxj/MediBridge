@@ -1,28 +1,36 @@
 package com.pm.patientservice.dto;
 
-import com.pm.patientservice.dto.validators.CreatePatientValidationGroup;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
 
 public class PatientRequestDTO {
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must not exceed 100 characters")
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "Address is required")
+    @NotBlank(message = "Address cannot be empty")
     private String address;
 
-    @NotBlank(message = "Date of Birth is required")
-    private String dateOfBirth;
+    private String medicalHistory;
 
-    @NotBlank(groups = CreatePatientValidationGroup.class, message = "Registered Date is required")
-    private String registeredDate;
+    @NotBlank(message = "Gender cannot be empty")
+    private String gender;
 
+    @NotBlank(message = "Phone number cannot be empty")
+    private String phoneNumber;
+
+    @NotNull(message = "Date of birth cannot be null")
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth;
+
+    @NotNull(message = "Registered date cannot be null")
+    @PastOrPresent(message = "Registered date cannot be in the future")
+    private LocalDate registeredDate;
+
+    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -47,19 +55,43 @@ public class PatientRequestDTO {
         this.address = address;
     }
 
-    public String getDateOfBirth() {
+    public String getMedicalHistory() {
+        return medicalHistory;
+    }
+
+    public void setMedicalHistory(String medicalHistory) {
+        this.medicalHistory = medicalHistory;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getRegisteredDate() {
+    public LocalDate getRegisteredDate() {
         return registeredDate;
     }
 
-    public void setRegisteredDate(String registeredDate) {
+    public void setRegisteredDate(LocalDate registeredDate) {
         this.registeredDate = registeredDate;
     }
 }

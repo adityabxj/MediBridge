@@ -1,0 +1,4 @@
+### GET request to get all doctors
+GET http://localhost:4004/api/doctor
+Authorization: Bearer {{token}}
+###

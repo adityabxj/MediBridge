@@ -1,0 +1,4 @@
+### Delete request to delete a doctor
+DELETE http://localhost:4004/api/doctor/delete?doctorId=487166df-52f1-4e3d-b2ac-00c7fccb41a9
+Authorization: Bearer {{token}}
+###

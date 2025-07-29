@@ -1,0 +1,19 @@
+### updates a doctor entity
+PUT http://localhost:4004/api/doctor/update?doctorId=2e436ad6-1956-4f90-a75c-1b48c4637abc
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Dr. Ema Watson",
+  "gender": "Female",
+  "email": "ema.watson@example.com",
+  "mobileNumber": "5550987654",
+  "status": "AVAILABLE",
+  "details": "Specialist in pediatrics",
+  "location": "Shelbyville",
+  "availableFrom": "2025-07-28T08:00:00",
+  "availableUpto": "2025-07-28T16:00:00",
+  "experience": 7,
+  "rating": 4.8,
+  "servicesProvided": ["Pediatrics", "Child Immunization"]
+}

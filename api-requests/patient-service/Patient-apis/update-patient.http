@@ -1,0 +1,16 @@
+### updates a patient entity
+PUT http://localhost:4004/api/patient/update?patientId=f651ec8c-9d29-4fe1-8808-7330548e4e2c
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Jane Doe2",
+  "email": "jane.doe2@example.com",
+  "address": "123 Elm St",
+  "dateOfBirth": "1990-09-23",
+  "registeredDate": "2025-07-28",
+  "gender": "Female",
+  "phoneNumber": "0000111123",
+  "medicalHistory": "Asthma, Diabetes"
+}
+###

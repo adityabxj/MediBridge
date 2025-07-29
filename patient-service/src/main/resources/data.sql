@@ -6,152 +6,91 @@ CREATE TABLE IF NOT EXISTS patient
     email           VARCHAR(255) UNIQUE NOT NULL,
     address         VARCHAR(255)        NOT NULL,
     date_of_birth   DATE                NOT NULL,
-    registered_date DATE                NOT NULL
+    registered_date DATE                NOT NULL,
+    gender          VARCHAR(255)        NOT NULL DEFAULT 'UNKNOWN',
+    phone_number    VARCHAR(255)        NOT NULL DEFAULT 'N/A',
+    medical_history VARCHAR(255),
+    created_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
--- Insert well-known UUIDs for specific patients
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '123e4567-e89b-12d3-a456-426614174000',
-       'John Doe',
-       'john.doe@example.com',
-       '123 Main St, Springfield',
-       '1985-06-15',
-       '2024-01-10'
-    WHERE NOT EXISTS (SELECT 1
-                  FROM patient
-                  WHERE id = '123e4567-e89b-12d3-a456-426614174000');
+-- Add new columns if they don't exist
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS gender VARCHAR(255) NOT NULL DEFAULT 'UNKNOWN';
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS phone_number VARCHAR(255) NOT NULL DEFAULT 'N/A';
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS medical_history VARCHAR(255);
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE patient ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '123e4567-e89b-12d3-a456-426614174001',
-       'Jane Smith',
-       'jane.smith@example.com',
-       '456 Elm St, Shelbyville',
-       '1990-09-23',
-       '2023-12-01'
-    WHERE NOT EXISTS (SELECT 1
-                  FROM patient
-                  WHERE id = '123e4567-e89b-12d3-a456-426614174001');
+-- Ensure the 'doctor' table exists
+CREATE TABLE IF NOT EXISTS doctor
+(
+    id              UUID PRIMARY KEY,
+    name            VARCHAR(255)        NOT NULL,
+    gender          VARCHAR(255)        NOT NULL,
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    mobile_number   VARCHAR(255)        NOT NULL,
+    status          VARCHAR(255)        NOT NULL,
+    details         TEXT,
+    location        VARCHAR(255)        NOT NULL,
+    available_from  TIMESTAMP,
+    available_upto  TIMESTAMP,
+    experience      INTEGER,
+    rating          DOUBLE PRECISION,
+    created_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '123e4567-e89b-12d3-a456-426614174002',
-       'Alice Johnson',
-       'alice.johnson@example.com',
-       '789 Oak St, Capital City',
-       '1978-03-12',
-       '2022-06-20'
-    WHERE NOT EXISTS (SELECT 1
-                  FROM patient
-                  WHERE id = '123e4567-e89b-12d3-a456-426614174002');
+-- Ensure the 'doctor_services' table exists
+CREATE TABLE IF NOT EXISTS doctor_services
+(
+    doctor_id UUID NOT NULL,
+    service   VARCHAR(255),
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id)
+    );
 
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '123e4567-e89b-12d3-a456-426614174003',
-       'Bob Brown',
-       'bob.brown@example.com',
-       '321 Pine St, Springfield',
-       '1982-11-30',
-       '2023-05-14'
-    WHERE NOT EXISTS (SELECT 1
-                  FROM patient
-                  WHERE id = '123e4567-e89b-12d3-a456-426614174003');
+-- Ensure the 'health_records' table exists
+CREATE TABLE IF NOT EXISTS health_records
+(
+    health_record_id UUID PRIMARY KEY,
+    patient_id       UUID NOT NULL,
+    symptoms         TEXT NOT NULL,
+    diagnosis        TEXT NOT NULL,
+    prescription     TEXT,
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patient(id)
+    );
 
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '123e4567-e89b-12d3-a456-426614174004',
-       'Emily Davis',
-       'emily.davis@example.com',
-       '654 Maple St, Shelbyville',
-       '1995-02-05',
-       '2024-03-01'
-    WHERE NOT EXISTS (SELECT 1
-                  FROM patient
-                  WHERE id = '123e4567-e89b-12d3-a456-426614174004');
+-- Ensure the 'appointment' table exists
+CREATE TABLE IF NOT EXISTS appointment
+(
+    appointment_id              UUID PRIMARY KEY,
+    patient_id                 UUID NOT NULL,
+    doctor_id                  UUID NOT NULL,
+    health_record_id           UUID,
+    details                    TEXT NOT NULL,
+    status                     VARCHAR(255) NOT NULL,
+    appointment_start_date_time TIMESTAMP NOT NULL,
+    appointment_end_date_time   TIMESTAMP NOT NULL,
+    duration_minutes           INTEGER NOT NULL,
+    location                   VARCHAR(255) NOT NULL,
+    created_at                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patient(id),
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id),
+    FOREIGN KEY (health_record_id) REFERENCES health_records(health_record_id)
+    );
 
--- Insert well-known UUIDs for specific patients
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174005',
-       'Michael Green',
-       'michael.green@example.com',
-       '987 Cedar St, Springfield',
-       '1988-07-25',
-       '2024-02-15'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174005');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174006',
-       'Sarah Taylor',
-       'sarah.taylor@example.com',
-       '123 Birch St, Shelbyville',
-       '1992-04-18',
-       '2023-08-25'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174006');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174007',
-       'David Wilson',
-       'david.wilson@example.com',
-       '456 Ash St, Capital City',
-       '1975-01-11',
-       '2022-10-10'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174007');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174008',
-       'Laura White',
-       'laura.white@example.com',
-       '789 Palm St, Springfield',
-       '1989-09-02',
-       '2024-04-20'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174008');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174009',
-       'James Harris',
-       'james.harris@example.com',
-       '321 Cherry St, Shelbyville',
-       '1993-11-15',
-       '2023-06-30'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174009');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174010',
-       'Emma Moore',
-       'emma.moore@example.com',
-       '654 Spruce St, Capital City',
-       '1980-08-09',
-       '2023-01-22'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174010');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174011',
-       'Ethan Martinez',
-       'ethan.martinez@example.com',
-       '987 Redwood St, Springfield',
-       '1984-05-03',
-       '2024-05-12'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174011');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174012',
-       'Sophia Clark',
-       'sophia.clark@example.com',
-       '123 Hickory St, Shelbyville',
-       '1991-12-25',
-       '2022-11-11'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174012');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174013',
-       'Daniel Lewis',
-       'daniel.lewis@example.com',
-       '456 Cypress St, Capital City',
-       '1976-06-08',
-       '2023-09-19'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174013');
-
-INSERT INTO patient (id, name, email, address, date_of_birth, registered_date)
-SELECT '223e4567-e89b-12d3-a456-426614174014',
-       'Isabella Walker',
-       'isabella.walker@example.com',
-       '789 Willow St, Springfield',
-       '1987-10-17',
-       '2024-03-29'
-    WHERE NOT EXISTS (SELECT 1 FROM patient WHERE id = '223e4567-e89b-12d3-a456-426614174014');
+-- Ensure the 'packages' table exists
+CREATE TABLE IF NOT EXISTS packages
+(
+    package_id UUID PRIMARY KEY,
+    name       VARCHAR(255) NOT NULL,
+    price      DECIMAL(10,2) NOT NULL,
+    details    TEXT NOT NULL,
+    city       VARCHAR(255) NOT NULL,
+    doctor_id  UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(id)
+    );

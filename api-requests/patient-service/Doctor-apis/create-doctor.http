@@ -1,0 +1,20 @@
+### creates a new doctor entity
+POST http://localhost:4004/api/doctor/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Dr. Emily Johnson",
+  "gender": "Female",
+  "email": "emily.johnson@example.com",
+  "mobileNumber": "5550987654",
+  "status": "AVAILABLE",
+  "details": "Specialist in pediatrics",
+  "location": "Shelbyville",
+  "availableFrom": "2025-07-28T08:00:00",
+  "availableUpto": "2025-07-28T16:00:00",
+  "experience": 7,
+  "rating": 4.8,
+  "servicesProvided": ["Pediatrics", "Child Immunization"]
+}
+###
